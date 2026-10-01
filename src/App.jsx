@@ -1,5 +1,5 @@
 import KitchenDemo from "./components/KitchenDemo.jsx";
-import { caseStudy, principles, profile, projects, skills, training } from "./content.js";
+import { caseStudy, principles, profile, projects, skills, training, trainingProvider } from "./content.js";
 
 function ContactLinks({ large = false }) {
   const links = [
@@ -64,6 +64,7 @@ export default function App() {
               <div className="links">
                 {caseStudy.live && <a className="button button--primary" href={caseStudy.live} target="_blank" rel="noreferrer">Try menuPilot</a>}
                 <a className={caseStudy.live ? "button" : "button button--primary"} href={caseStudy.repo} target="_blank" rel="noreferrer">Read the code</a>
+                {caseStudy.instagram && <a className="button" href={caseStudy.instagram} target="_blank" rel="noreferrer">Instagram</a>}
               </div>
             </div>
             <div>
@@ -112,11 +113,18 @@ export default function App() {
             {profile.about.map((para) => <p key={para}>{para}</p>)}
             {profile.location && <p className="about-place">Based in {profile.location}, working remotely.</p>}
             <h3>Training</h3>
+            <p className="training-provider">
+              At <abbr title={trainingProvider.fullName}>{trainingProvider.name}</abbr>, the {trainingProvider.fullName}, with trainer {trainingProvider.trainer}.
+            </p>
             <dl className="training">
               {training.map((t) => (
                 <div key={t.title}>
                   <dt>{t.title}</dt>
-                  <dd>{t.hours} hours of {t.topics}</dd>
+                  <dd>
+                    {t.hours} hours of {t.topics}
+                    {t.dates && <span className="training-dates">{t.dates}</span>}
+                    {t.certificate && <a className="training-cert" href={t.certificate} target="_blank" rel="noreferrer">View certificate</a>}
+                  </dd>
                 </div>
               ))}
             </dl>

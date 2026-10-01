@@ -10,18 +10,25 @@ export const profile = {
   email: "ahmedkahlout258@gmail.com",
   whatsapp: "https://wa.me/970597401925",
   github: "https://github.com/ENGahmed-2005",
-  linkedin: "", // e.g. "https://www.linkedin.com/in/…"
+  linkedin: "https://www.linkedin.com/in/ahmed-alkahlout/",
   cv: "", // e.g. "/ahmed-alkahlout-cv.pdf", file placed in /public
   photo: { src: "/ahmed.webp", alt: "Portrait of Ahmed Alkahlout" },
   about: [
-    "I'm a third-year Software Engineering student and a frontend developer who ships complete, working applications rather than isolated exercises.",
+    "I'm a fourth-year Software Engineering student and a React developer who ships complete, working applications rather than isolated exercises.",
     "I own a UI end to end: layout, state, routing and the API calls behind it. Most of what I build is in Arabic, right to left, and has to work on whatever phone the user has.",
   ],
 };
 
+// Both courses at PCIT with trainer Mohammed Naji Abu Al-Qumboz.
+export const trainingProvider = {
+  name: "PCIT",
+  fullName: "Palestinian Center for Information & Technology",
+  trainer: "Mohammed Naji Abu Al-Qumboz",
+};
+
 export const training = [
-  { title: "Frontend fundamentals", hours: 120, topics: "HTML, CSS and JavaScript" },
-  { title: "Modern React", hours: 60, topics: "React, JavaScript and ECMAScript, Next.js" },
+  { title: "Frontend fundamentals", hours: 120, topics: "HTML, CSS and JavaScript", dates: "March to June 2026", certificate: "/certificates/pcit-frontend-120h.webp" },
+  { title: "Modern React", hours: 60, topics: "React, JavaScript and ECMAScript, Next.js", dates: "", certificate: "" },
 ];
 
 export const skills = ["JavaScript (ES6+)", "React", "Next.js", "Vite", "Tailwind CSS", "Bootstrap", "HTML and CSS", "REST APIs", "Right-to-left (Arabic) layouts", "Git and GitHub"];
@@ -42,6 +49,7 @@ export const caseStudy = {
   stack: ["React 19", "Vite", "Tailwind CSS", "React Router", "REST API (Laravel)"],
   repo: "https://github.com/ENGahmed-2005/menuPilot-",
   live: "https://menupilot-lilac.vercel.app",
+  instagram: "https://www.instagram.com/menupilot_/",
   shots: [
     { src: "/work/kitchen.webp", w: 1600, h: 1000, alt: "menuPilot kitchen screen with order tickets grouped by status", caption: "Kitchen screen", wide: true },
     { src: "/work/menu_phone.webp", w: 560, h: 1212, alt: "Guest menu on a phone, opened from a table QR code", caption: "Guest menu from a table QR" },
