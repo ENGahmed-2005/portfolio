@@ -1,9 +1,10 @@
 import KitchenDemo from "./components/KitchenDemo.jsx";
-import { caseStudy, principles, profile } from "./content.js";
+import { caseStudy, principles, profile, projects, skills, training } from "./content.js";
 
 function ContactLinks({ large = false }) {
   const links = [
     profile.email && { href: `mailto:${profile.email}`, label: "Email me", primary: true },
+    profile.whatsapp && { href: profile.whatsapp, label: "WhatsApp" },
     profile.github && { href: profile.github, label: "GitHub" },
     profile.linkedin && { href: profile.linkedin, label: "LinkedIn" },
     profile.cv && { href: profile.cv, label: "Download CV" },
@@ -29,7 +30,7 @@ export default function App() {
         <a href="#top" className="wordmark">{profile.name}<span className="wordmark-role">{profile.role}</span></a>
         <nav aria-label="Sections">
           <a href="#work">Work</a>
-          <a href="#principles">How I work</a>
+          <a href="#about">About</a>
           <a href="#contact">Contact</a>
         </nav>
       </header>
@@ -79,6 +80,48 @@ export default function App() {
                 <figcaption>{s.caption}</figcaption>
               </figure>
             ))}
+          </div>
+        </section>
+
+        <section className="more" aria-labelledby="more-title">
+          <h2 id="more-title">More work</h2>
+          <ul className="more-list">
+            {projects.map((p) => (
+              <li key={p.name} className="more-item">
+                <div className="more-head">
+                  <h3 dir={p.rtl ? "rtl" : undefined} lang={p.rtl ? "ar" : undefined}>{p.name}</h3>
+                  <p className="more-kind">{p.kind}</p>
+                </div>
+                <div className="more-body">
+                  <p>{p.text}</p>
+                  <p className="stack">{p.stack}</p>
+                </div>
+                <div className="more-links">
+                  {p.live && <a href={p.live} target="_blank" rel="noreferrer">Open it</a>}
+                  {p.repo && <a href={p.repo} target="_blank" rel="noreferrer">Code</a>}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section id="about" className="about" aria-labelledby="about-title">
+          <img className="about-photo" src={profile.photo.src} alt={profile.photo.alt} width="720" height="720" loading="lazy" decoding="async" />
+          <div className="about-text">
+            <h2 id="about-title">About me</h2>
+            {profile.about.map((para) => <p key={para}>{para}</p>)}
+            {profile.location && <p className="about-place">Based in {profile.location}, working remotely.</p>}
+            <h3>Training</h3>
+            <dl className="training">
+              {training.map((t) => (
+                <div key={t.title}>
+                  <dt>{t.title}</dt>
+                  <dd>{t.hours} hours of {t.topics}</dd>
+                </div>
+              ))}
+            </dl>
+            <h3>Tools I use</h3>
+            <p className="stack">{skills.join(", ")}</p>
           </div>
         </section>
 
