@@ -1,8 +1,9 @@
-/* Mounts a three.js scene into a box: renderer, resize, a render loop that
-   only runs while the box is on screen, reduced motion, and clean disposal.
-   `failed` is true when WebGL isn't available, so callers show a fallback. */
+/* Mounts a three.js scene into a fixed-size box and draws only when
+   something changes: `invalidate()` asks for frames, and the loop stops by
+   itself once `update()` reports the scene has settled. Idle, it costs
+   nothing. `failed` = no WebGL, so callers show a fallback. */
 import { useEffect, useRef, useState } from "react";
-import * as THREE from "three";
+import { WebGLRenderer } from "three";
 
 function webglAvailable() {
   try {
@@ -16,6 +17,7 @@ function webglAvailable() {
 export function useStage(make) {
   const ref = useRef(null);
   const api = useRef(null);
+  const invalidateRef = useRef(() => {});
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -24,58 +26,53 @@ export function useStage(make) {
     if (!webglAvailable()) { setFailed(true); return undefined; }
     let renderer;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power" });
+      renderer = new WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power" });
     } catch {
       setFailed(true);
       return undefined;
     }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
     const stage = make();
     api.current = stage;
     const canvas = renderer.domElement;
     canvas.setAttribute("aria-hidden", "true");
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    el.appendChild(canvas);
+    el.appendChild(canvas); // positioned absolutely by CSS, so it never sizes the box
+
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    let raf = 0, last = 0, time = 0;
+    const loop = (now) => {
+      const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
+      last = now;
+      time += dt;
+      const busy = stage.update(time, reduce ? 1 : dt);
+      renderer.render(stage.scene, stage.camera);
+      raf = busy ? requestAnimationFrame(loop) : 0;
+      if (!raf) last = 0;
+    };
+    const invalidate = () => { if (!raf) raf = requestAnimationFrame(loop); };
+    invalidateRef.current = invalidate;
 
     const resize = () => {
-      const w = el.clientWidth || 320, h = el.clientHeight || 320;
+      const w = el.clientWidth, h = el.clientHeight;
+      if (!w || !h) return;
       renderer.setSize(w, h, false);
       stage.resize(w, h);
+      invalidate();
     };
     resize();
     const ro = "ResizeObserver" in window ? new ResizeObserver(resize) : null;
     ro?.observe(el);
 
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    let visible = true, raf = 0, last = performance.now(), time = 0;
-    const frame = (now) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      if (!reduce) time += dt;
-      stage.update(time, reduce ? 1 : dt); // reduced motion: no idle animation, changes snap
-      renderer.render(stage.scene, stage.camera);
-      raf = visible ? requestAnimationFrame(frame) : 0;
-    };
-    const io = "IntersectionObserver" in window
-      ? new IntersectionObserver(([entry]) => {
-          visible = entry.isIntersecting;
-          if (visible && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
-        })
-      : null;
-    io?.observe(el);
-    raf = requestAnimationFrame(frame);
-
     return () => {
       cancelAnimationFrame(raf);
       ro?.disconnect();
-      io?.disconnect();
       stage.dispose();
       renderer.dispose();
       canvas.remove();
       api.current = null;
+      invalidateRef.current = () => {};
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return { ref, api, failed };
+  return { ref, api, failed, invalidate: () => invalidateRef.current() };
 }

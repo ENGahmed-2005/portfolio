@@ -1,17 +1,28 @@
-/* The dock: section links that magnify on hover, a dot under the section in
-   view, then external links. Works with keyboard; magnification is CSS only. */
+/* The dock: section links that magnify on hover (CSS only), the section in
+   view highlighted, then external links. Works with the keyboard. */
 import { useEffect, useState } from "react";
 
 export default function Dock({ items, links }) {
   const [active, setActive] = useState(items[0]?.id);
   useEffect(() => {
-    if (typeof window === "undefined" || !("IntersectionObserver" in window)) return undefined;
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
-      { rootMargin: "-40% 0px -55% 0px" },
-    );
-    items.forEach((i) => { const el = document.getElementById(i.id); if (el) observer.observe(el); });
-    return () => observer.disconnect();
+    // The active section is the last one whose top has passed a third of the screen.
+    let frame = 0;
+    const spy = () => {
+      frame = 0;
+      const line = window.innerHeight / 3;
+      let current = items[0]?.id;
+      for (const { id } of items) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= line) current = id;
+      }
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) current = items.at(-1)?.id;
+      setActive(current);
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(spy); };
+    spy();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
   }, [items]);
 
   return (

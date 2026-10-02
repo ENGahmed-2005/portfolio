@@ -20,7 +20,7 @@ export default function MenuBar({ name, items, availability, onSearch }) {
       </nav>
       <div className="menubar-status">
         <button type="button" className="menubar-search" onClick={onSearch} aria-label="Search the portfolio" aria-keyshortcuts="Meta+K Control+K">
-          <Search size={14} aria-hidden="true" /><kbd>{isMac() ? "⌘K" : "Ctrl K"}</kbd>
+          <Search size={14} aria-hidden="true" /><span className="menubar-search-label">Search</span><kbd>{isMac() ? "⌘K" : "Ctrl K"}</kbd>
         </button>
         <span className="menubar-available"><span className="dot" aria-hidden="true" />{availability}</span>
         <span className="menubar-clock" title="Local time in Gaza">Gaza <time>{time}</time></span>

@@ -8,8 +8,8 @@ a menu bar, a dock, and every section in its own window.
   the order, watch the ticket move from new to ready.
 - **Scan.app** (three.js) — a real QR code built from cubes. Hover to push
   them up, then "Flatten to scan" and open menuPilot from your phone.
-- **Phone.app** (three.js) — menuPilot screens on a 3D phone: drag to turn
-  it, tap to change the screen.
+- **Phone.app** (CSS 3D) — menuPilot screens on a phone that leans toward
+  the pointer; tap it to change the screen.
 - **Spotlight** — press ⌘K / Ctrl+K to jump to any section or project.
 - Window lights work: red folds a window, green opens it full screen (Esc).
 
@@ -29,12 +29,15 @@ Images live in `public/work/`.
 
 ## Design notes
 
-- Dark navy desktop, glass windows, accent `#F2A93B` (menuPilot orange);
-  the system font (SF Pro on a Mac, Segoe UI on Windows).
-- three.js loads in its own chunk, only when the 3D windows render, and
-  stops drawing when they scroll out of view. Without WebGL both fall back
-  to flat versions (the flat QR still scans).
-- AOS reveals each window once; it is off for `prefers-reduced-motion`.
+- macOS in light mode: a plain grey desktop, white windows with the system's
+  grey chrome, and macOS orange `#F5821F` as the accent. The dark kitchen
+  display is the one bold element. No blur, gradients or glow.
+- Type: Instrument Sans, self-hosted (no request to Google Fonts).
+- three.js is in its own chunk, loaded after the page is idle and the 3D
+  window is near. It draws only while something moves and costs nothing
+  idle. The canvas is absolutely positioned in a fixed-height box, so it
+  can't grow its container. Without WebGL the flat QR still scans.
+- AOS fades each window in once; it is off for `prefers-reduced-motion`.
 - Keyboard focus is visible, the demo announces status changes to screen
   readers, and motion is turned off for `prefers-reduced-motion`.
 

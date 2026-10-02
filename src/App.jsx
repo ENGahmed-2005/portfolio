@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { Award, ChefHat, FileBadge, FolderOpen, House, Info, Mail, NotebookPen, QrCode, Smartphone, User } from "lucide-react";
@@ -10,9 +10,31 @@ import Spotlight from "./components/Spotlight.jsx";
 import { GitHubIcon, LinkedInIcon } from "./components/BrandIcons.jsx";
 import { caseStudy, principles, profile, projects, skills, training, trainingProvider } from "./content.js";
 
-// three.js loads only when these windows render.
+import PhoneView from "./components/PhoneView.jsx";
+
+// three.js is downloaded only when the visitor gets close to Scan.app.
 const QrCode3D = lazy(() => import("./components/QrCode3D.jsx"));
-const Phone3D = lazy(() => import("./components/Phone3D.jsx"));
+
+function WhenNear({ children, fallback }) {
+  const ref = useRef(null);
+  const [near, setNear] = useState(false);
+  useEffect(() => {
+    // Wait for the page to finish its first paint and go idle, then for the
+    // window to come close, so three.js never competes with the first view.
+    const el = ref.current;
+    let io, cancelled = false;
+    const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1200));
+    const start = () => {
+      if (cancelled) return;
+      if (!el || !("IntersectionObserver" in window)) { setNear(true); return; }
+      io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setNear(true); io.disconnect(); } }, { rootMargin: "150px 0px" });
+      io.observe(el);
+    };
+    const id = idle(start, { timeout: 2500 });
+    return () => { cancelled = true; io?.disconnect(); (window.cancelIdleCallback || clearTimeout)(id); };
+  }, []);
+  return <div ref={ref} className="near">{near ? children : fallback}</div>;
+}
 
 const SECTIONS = [
   { id: "top", label: "Home", icon: House },
@@ -40,7 +62,7 @@ function Hero() {
   ];
   return (
     <div id="top" className="desk desk--hero">
-      <Window title="Ahmed Alkahlout — Get Info" icon={Info} className="info-window" aos="zoom-out" bodyClassName="info">
+      <Window title="Ahmed Alkahlout — Get Info" icon={Info} className="info-window" bodyClassName="info">
         <div className="info-head">
           <img className="info-photo" src={profile.photo.src} alt={profile.photo.alt} width="720" height="720" />
           <div>
@@ -71,14 +93,14 @@ function Hero() {
 
 function TryIt() {
   const phoneShots = caseStudy.shots.filter((s) => !s.wide);
-  const loading = <div className="stage stage--loading">Loading the 3D view…</div>;
+  const loading = <div className="stage-wrap"><div className="stage stage--loading">Loading the 3D code…</div></div>;
   return (
     <div id="try" className="desk desk--try">
       <Window title="Scan.app — open menuPilot on your phone" icon={QrCode} bodyClassName="stage-body">
-        <Suspense fallback={loading}><QrCode3D url={caseStudy.live || caseStudy.repo} /></Suspense>
+        <WhenNear fallback={loading}><Suspense fallback={loading}><QrCode3D url={caseStudy.live || caseStudy.repo} /></Suspense></WhenNear>
       </Window>
       <Window title="Phone.app — what the guest sees" icon={Smartphone} delay={120} bodyClassName="stage-body">
-        <Suspense fallback={loading}><Phone3D screens={phoneShots} /></Suspense>
+        <PhoneView screens={phoneShots} />
       </Window>
     </div>
   );
@@ -287,7 +309,7 @@ export default function App() {
 
   useEffect(() => {
     AOS.init({
-      duration: 650,
+      duration: 500,
       easing: "ease-out-cubic",
       once: true,
       offset: 40,

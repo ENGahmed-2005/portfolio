@@ -1,4 +1,4 @@
-/* Scan.app: a real QR code made of cubes. Hover to push the cubes up;
+/* Scan.app: a real QR code made of cubes. Move over it to push the cubes up;
    "Flatten to scan" settles them and faces the camera so a phone can read
    it. Without WebGL it shows the same code as a flat, scannable SVG. */
 import { useEffect, useMemo, useState } from "react";
@@ -19,26 +19,28 @@ function FlatQr({ url }) {
 
 export default function QrCode3D({ url }) {
   const [flat, setFlat] = useState(false);
-  const { ref, api, failed } = useStage(() => createQrScene(url));
-  useEffect(() => { api.current?.setFlat(flat); }, [flat, api]);
+  const { ref, api, failed, invalidate } = useStage(() => createQrScene(url));
+  useEffect(() => { api.current?.setFlat(flat); invalidate(); }, [flat]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const move = (e) => {
     const box = e.currentTarget.getBoundingClientRect();
     api.current?.setPointer(((e.clientX - box.left) / box.width) * 2 - 1, -(((e.clientY - box.top) / box.height) * 2 - 1));
+    invalidate();
   };
+  const leave = () => { api.current?.clearPointer(); invalidate(); };
 
   return (
     <div className="stage-wrap">
       {failed
         ? <div className="stage stage--flat"><FlatQr url={url} /></div>
-        : <div ref={ref} className="stage stage--qr" role="img" aria-label="A 3D QR code made of cubes that opens menuPilot" onPointerMove={move} onPointerLeave={() => api.current?.clearPointer()} />}
+        : <div ref={ref} className="stage stage--qr" role="img" aria-label="A 3D QR code made of cubes that opens menuPilot" onPointerMove={move} onPointerLeave={leave} />}
       <div className="stage-bar">
         {!failed && (
           <button type="button" className="btn btn--small" aria-pressed={flat} onClick={() => setFlat((f) => !f)}>
             {flat ? "Back to 3D" : "Flatten to scan"}
           </button>
         )}
-        <p>{failed || flat ? "Point your phone camera at the code to open menuPilot." : "Move your cursor over the code, then flatten it to scan."}</p>
+        <p>{failed || flat ? "Point your phone camera at the code to open menuPilot." : "Move over the code, then flatten it to scan."}</p>
       </div>
     </div>
   );

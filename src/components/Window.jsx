@@ -2,7 +2,7 @@
    double-click on the bar), the green one opens it full screen, Esc leaves. */
 import { useEffect, useState } from "react";
 
-export default function Window({ id, title, icon: Icon, toolbar, children, className = "", bodyClassName = "", delay = 0, aos = "fade-up" }) {
+export default function Window({ id, title, icon: Icon, toolbar, children, className = "", bodyClassName = "", delay = 0, aos = "fade" }) {
   const [folded, setFolded] = useState(false);
   const [full, setFull] = useState(false);
   useEffect(() => {
