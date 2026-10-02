@@ -10,6 +10,16 @@
     <meta property="og:image" content="/work/kitchen.webp" />
     <meta name="theme-color" content="#E4E4E7" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23172430'/><text x='16' y='21.5' font-family='Arial' font-weight='700' font-size='14' text-anchor='middle' fill='%23FFF6CF'>AK</text></svg>" />
+    <script>
+      /* Language and theme before the first paint: a saved choice, ?lang=ar in the link, then the device. */
+      (function () {
+        var d = document.documentElement, l, t;
+        try { l = new URLSearchParams(location.search).get("lang") || localStorage.getItem("lang"); t = localStorage.getItem("theme"); } catch (e) {}
+        if (l !== "ar" && l !== "en") l = (navigator.language || "").toLowerCase().indexOf("ar") === 0 ? "ar" : "en";
+        if (t !== "dark" && t !== "light") t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        d.lang = l; d.dir = l === "ar" ? "rtl" : "ltr"; d.setAttribute("data-theme", t);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

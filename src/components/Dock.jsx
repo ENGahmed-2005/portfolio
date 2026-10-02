@@ -1,8 +1,10 @@
 /* The dock: section links that magnify on hover (CSS only), the section in
    view highlighted, then external links. Works with the keyboard. */
 import { useEffect, useState } from "react";
+import { useI18n } from "../i18n.jsx";
 
 export default function Dock({ items, links }) {
+  const { t } = useI18n();
   const [active, setActive] = useState(items[0]?.id);
   useEffect(() => {
     // The active section is the last one whose top has passed a third of the screen.
@@ -23,10 +25,10 @@ export default function Dock({ items, links }) {
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => { cancelAnimationFrame(frame); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
-  }, [items]);
+  }, [items.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <nav className="dock" aria-label="Dock">
+    <nav className="dock" aria-label={t.dock}>
       {items.map(({ id, label, icon: Icon }) => (
         <a key={id} href={`#${id}`} className={`dock-item ${active === id ? "is-active" : ""}`} aria-current={active === id ? "location" : undefined}>
           <span className="dock-icon"><Icon size={22} strokeWidth={1.8} aria-hidden="true" /></span>

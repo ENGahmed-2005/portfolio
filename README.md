@@ -12,6 +12,9 @@ a menu bar, a dock, and every section in its own window.
   the pointer; tap it to change the screen.
 - **Spotlight** — press ⌘K / Ctrl+K to jump to any section or project.
 - Window lights work: red folds a window, green opens it full screen (Esc).
+- English and Arabic (the whole page flips right to left), light and dark
+  theme. Both are remembered; the first visit follows the visitor's device,
+  and `?lang=ar` / `?lang=en` in a link picks the language.
 
 ## Run
 
@@ -23,7 +26,8 @@ npm run build   # production build in dist/
 
 ## Edit the content
 
-All text, links and project images are in `src/content.js`. Empty fields
+All text, links and project images are in `src/content.js`, once for
+English (`en`) and once for Arabic (`ar`); interface words are in `ui`. Empty fields
 (email, LinkedIn, CV, live demo link) are hidden until you fill them.
 Images live in `public/work/`.
 
@@ -32,7 +36,9 @@ Images live in `public/work/`.
 - macOS in light mode: a plain grey desktop, white windows with the system's
   grey chrome, and macOS orange `#F5821F` as the accent. The dark kitchen
   display is the one bold element. No blur, gradients or glow.
-- Type: Instrument Sans, self-hosted (no request to Google Fonts).
+- Type: Instrument Sans for Latin, IBM Plex Sans Arabic for Arabic, both
+  self-hosted (no request to Google Fonts).
+- Dark theme: the macOS dark appearance (graphite), same orange accent.
 - three.js is in its own chunk, loaded after the page is idle and the 3D
   window is near. It draws only while something moves and costs nothing
   idle. The canvas is absolutely positioned in a fixed-height box, so it

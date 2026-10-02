@@ -2,8 +2,10 @@
    open a project or get in touch, all from the keyboard. */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CornerDownLeft, Search } from "lucide-react";
+import { useI18n } from "../i18n.jsx";
 
 export default function Spotlight({ open, onClose, items }) {
+  const { t: { spotlight: s } } = useI18n();
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const input = useRef(null);
@@ -32,7 +34,7 @@ export default function Spotlight({ open, onClose, items }) {
 
   return (
     <div className="spotlight-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="spotlight" role="dialog" aria-modal="true" aria-label="Search the portfolio">
+      <div className="spotlight" role="dialog" aria-modal="true" aria-label={s.label}>
         <div className="spotlight-field">
           <Search size={18} aria-hidden="true" />
           <input
@@ -40,15 +42,15 @@ export default function Spotlight({ open, onClose, items }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={keys}
-            placeholder="Search sections, projects, contact"
-            aria-label="Search"
+            placeholder={s.placeholder}
+            aria-label={s.label}
             role="combobox"
             aria-expanded="true"
             aria-controls="spotlight-results"
             aria-activedescendant={results[active] ? `spot-${active}` : undefined}
           />
         </div>
-        <ul id="spotlight-results" className="spotlight-results" role="listbox" aria-label="Results">
+        <ul id="spotlight-results" className="spotlight-results" role="listbox" aria-label={s.results}>
           {results.map((item, i) => {
             const Icon = item.icon;
             return (
@@ -61,7 +63,7 @@ export default function Spotlight({ open, onClose, items }) {
               </li>
             );
           })}
-          {!results.length && <li className="spot-empty">No match. Try "menuPilot", "Gaza" or "email".</li>}
+          {!results.length && <li className="spot-empty">{s.noMatch}</li>}
         </ul>
       </div>
     </div>
