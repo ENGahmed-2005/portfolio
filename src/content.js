@@ -52,9 +52,9 @@ export const caseStudy = {
   instagram: "https://www.instagram.com/menupilot_/",
   shots: [
     { src: "/work/kitchen.webp", w: 1600, h: 1000, alt: "menuPilot kitchen screen with order tickets grouped by status", caption: "Kitchen screen", wide: true },
-    { src: "/work/menu_phone.webp", w: 560, h: 1212, alt: "Guest menu on a phone, opened from a table QR code", caption: "Guest menu from a table QR" },
-    { src: "/work/tracking_phone.webp", w: 560, h: 1212, alt: "Live order tracking on a phone", caption: "Live order tracking" },
-    { src: "/work/online_phone.webp", w: 560, h: 1212, alt: "Online ordering for pickup and delivery on a phone", caption: "Online ordering" },
+    { src: "/work/menu_phone.webp", w: 560, h: 1212, alt: "Guest menu on a phone, opened from a table QR code", caption: "Guest menu from a table QR", short: "Menu" },
+    { src: "/work/tracking_phone.webp", w: 560, h: 1212, alt: "Live order tracking on a phone", caption: "Live order tracking", short: "Tracking" },
+    { src: "/work/online_phone.webp", w: 560, h: 1212, alt: "Online ordering for pickup and delivery on a phone", caption: "Online ordering", short: "Online" },
     { src: "/work/dashboard.webp", w: 1600, h: 1000, alt: "Owner dashboard with today's orders and sales", caption: "Owner dashboard", wide: true },
     { src: "/work/cashier.webp", w: 1600, h: 1000, alt: "Cashier screen with tables and bills", caption: "Cashier and bills", wide: true },
   ],
